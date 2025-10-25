@@ -3,26 +3,6 @@ Resource    ${CURDIR}/../../import.robot
 Resource    ../../Keywords/generic.resource
 
 *** Variables ***
-##User Data ###
-${userID}    ajbhokare143@gmail.com
-${GptPassword}    Akki@143
-${SearchThis}    How are You
-${gptURL}    https://chat.openai.com/auth/login
-
-
-##Locators###
-${GPTLoginButton}    //button//div[text()="Log in"]
-${ContinueBtn}    //button[contains(text(),'Continue')]
-${gptUser_Loc}    //input[@id='username']
-${GptPassword_Loc}    //input[@id='password']
-${gptTitle}    //h1[contains(text(),'ChatGPT')]
-${SearchGPT}    //textarea[@id='prompt-textarea']
-${nextbtn}    //div[contains(text(),'Next')]
-${dialogbox}    (//div[@role='dialog'])[1]
-${donebtn}    //div[contains(text(),'Done')]
-${sendSearch}    //textarea[@id='prompt-textarea']//..//button
-
-*** Variables ***
 ${Product_1}    Sauce Labs Backpack
 ${Product_2}    Sauce Labs Bike Light
 
