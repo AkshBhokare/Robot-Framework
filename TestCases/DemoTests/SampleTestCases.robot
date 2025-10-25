@@ -28,32 +28,17 @@ ${Product_2}    Sauce Labs Bike Light
 
 
 *** Test Cases ***
-Open Browser And Login To GTP
-    Open Browser    ${gptURL}    ${Browser}    options=add_experimental_option("detach", True)
-    Maximize Browser Window
-    Wait and Click Element    ${GPTLoginButton}        
-    Wait Until Element Is Visible    ${gptUser_Loc}
-    Input Text    ${gptUser_Loc}    ${userID}
-    Wait and Click Element    ${ContinueBtn}    15s
-    Input Password    ${GptPassword_Loc}    ${GptPassword}
-    Wait and Click Element    (//button[contains(text(),'Continue')])[2]    15s
-    Wait Until Element Is Visible    ${gptTitle}    10s
-
-    ${isVisible}    Run Keyword And Return Status    Element should be visible    ${dialogbox}
-    IF    '${isVisible}' == 'True'
-            Wait and Click Element    ${nextbtn}    20s
-            Wait and Click Element    ${nextbtn}    20s
-            Wait and Click Element    ${donebtn}    15s
-        ELSE
-        Input Text    ${SearchGPT}    ${SearchThis}
-    END
-    Input Text    ${SearchGPT}    ${SearchThis}
-    Wait and Click Element    ${sendSearch}
-
 Test 
-    Open Browser    saucedemo.comn    ${Browser}    options=add_experimental_option("detach", True)
+    ${chrome_options}=    Evaluate    selenium.webdriver.ChromeOptions()    modules=selenium.webdriver
+    Call Method    ${chrome_options}    add_argument    --start-maximized
+    Call Method    ${chrome_options}    add_argument    --disable-notifications
+    # Call Method    ${chrome_options}    add_argument    --no-sandbox
+    Call Method    ${chrome_options}    add_argument    --disable-dev-shm-usage
+    Create Webdriver    Chrome    options=${chrome_options}
+    Go To    https://www.saucedemo.com
+    Wait Until Element Is Visible    id=login-button    10s
     Input Text    id=user-name    standard_user
-    Input Test    id=password    secret_sauce
+    Input Text    id=password    secret_sauce
     Click Button    id=login-button
     wait Until Element Is Visible    //div[contains(text(),"Swag Labs")]    10s
     wait and Click Element    //div[text()="${Product_1}"]//../../..//button[text()='Add to cart']
@@ -65,13 +50,13 @@ Test
     wait Until Element Is Visible    //div[text()="${Product_2}"]//../../..//button[text()='Remove']
 
     Click Element    id=shopping_cart_container
-    wait Until Element Is Visible    //div[contains(text(),"Your Cart")]    10s
+    wait Until Element Is Visible    //span[contains(text(),"Your Cart")]    10s
 
     ${CartItems}    Get WebElements    //div[@class='cart_list']//div[@class='cart_item']
-    Get Length    ${CartItems}    ${ItemCount}
+    ${ItemCount}    Get Length    ${CartItems}
     Should Be Equal As Integers    ${ItemCount}    2
-    For    ${item}    IN    @{CartItems}
-        ${CartItemLabel}    Get Text    xpath=.//div[@class='inventory_item_name']    element=${item}
+    FOR    ${item}    IN    @{CartItems}
+        ${CartItemLabel}    Get Text    xpath=//div[@class='inventory_item_name']
         Should be Equal    ${Product_1}    ${CartItemLabel}
     END
 
