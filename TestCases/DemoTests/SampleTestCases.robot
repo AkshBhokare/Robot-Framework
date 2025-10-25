@@ -1,0 +1,77 @@
+*** Settings ***
+Resource    ${CURDIR}/../../import.robot
+Resource    ../../Keywords/generic.resource
+
+*** Variables ***
+##User Data ###
+${userID}    ajbhokare143@gmail.com
+${GptPassword}    Akki@143
+${SearchThis}    How are You
+${gptURL}    https://chat.openai.com/auth/login
+
+
+##Locators###
+${GPTLoginButton}    //button//div[text()="Log in"]
+${ContinueBtn}    //button[contains(text(),'Continue')]
+${gptUser_Loc}    //input[@id='username']
+${GptPassword_Loc}    //input[@id='password']
+${gptTitle}    //h1[contains(text(),'ChatGPT')]
+${SearchGPT}    //textarea[@id='prompt-textarea']
+${nextbtn}    //div[contains(text(),'Next')]
+${dialogbox}    (//div[@role='dialog'])[1]
+${donebtn}    //div[contains(text(),'Done')]
+${sendSearch}    //textarea[@id='prompt-textarea']//..//button
+
+*** Variables ***
+${Product_1}    Sauce Labs Backpack
+${Product_2}    Sauce Labs Bike Light
+
+
+*** Test Cases ***
+Open Browser And Login To GTP
+    Open Browser    ${gptURL}    ${Browser}    options=add_experimental_option("detach", True)
+    Maximize Browser Window
+    Wait and Click Element    ${GPTLoginButton}        
+    Wait Until Element Is Visible    ${gptUser_Loc}
+    Input Text    ${gptUser_Loc}    ${userID}
+    Wait and Click Element    ${ContinueBtn}    15s
+    Input Password    ${GptPassword_Loc}    ${GptPassword}
+    Wait and Click Element    (//button[contains(text(),'Continue')])[2]    15s
+    Wait Until Element Is Visible    ${gptTitle}    10s
+
+    ${isVisible}    Run Keyword And Return Status    Element should be visible    ${dialogbox}
+    IF    '${isVisible}' == 'True'
+            Wait and Click Element    ${nextbtn}    20s
+            Wait and Click Element    ${nextbtn}    20s
+            Wait and Click Element    ${donebtn}    15s
+        ELSE
+        Input Text    ${SearchGPT}    ${SearchThis}
+    END
+    Input Text    ${SearchGPT}    ${SearchThis}
+    Wait and Click Element    ${sendSearch}
+
+Test 
+    Open Browser    saucedemo.comn    ${Browser}    options=add_experimental_option("detach", True)
+    Input Text    id=user-name    standard_user
+    Input Test    id=password    secret_sauce
+    Click Button    id=login-button
+    wait Until Element Is Visible    //div[contains(text(),"Swag Labs")]    10s
+    wait and Click Element    //div[text()="${Product_1}"]//../../..//button[text()='Add to cart']
+    
+    wait Until Element Is Visible    //div[text()="${Product_1}"]//../../..//button[text()='Remove']    10s
+
+    wait Until Element Is Visible    //div[contains(text(),"Swag Labs")]    10s
+    wait and Click Element    //div[text()="${Product_2}"]//../../..//button[text()='Add to cart']
+    wait Until Element Is Visible    //div[text()="${Product_2}"]//../../..//button[text()='Remove']
+
+    Click Element    id=shopping_cart_container
+    wait Until Element Is Visible    //div[contains(text(),"Your Cart")]    10s
+
+    ${CartItems}    Get WebElements    //div[@class='cart_list']//div[@class='cart_item']
+    Get Length    ${CartItems}    ${ItemCount}
+    Should Be Equal As Integers    ${ItemCount}    2
+    For    ${item}    IN    @{CartItems}
+        ${CartItemLabel}    Get Text    xpath=.//div[@class='inventory_item_name']    element=${item}
+        Should be Equal    ${Product_1}    ${CartItemLabel}
+    END
+

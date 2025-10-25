@@ -1,0 +1,8 @@
+# Ignore all files in the results/screenshots directory
+/results\screenshots\*.*
+.png
+.jpg
+.pyc
+.xml
+.html
+results
